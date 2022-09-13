@@ -1,48 +1,36 @@
 package ru.javarush.november.zaharin.cryptoanalizer;
 
 import java.io.*;
-import java.util.HashMap;
+import java.util.*;
 
 public class Creator {
     private char[] alphabet;
-//    private char[] charsAlphabet = {'а', 'б', 'в', 'г', 'д', 'е', 'ё', 'ж', 'з', 'и',
-//            'й', 'к', 'л', 'м', 'н', 'о', 'п', 'р', 'с', 'т',
-//            'у', 'ф', 'х', 'ц', 'ч', 'ш', 'щ', 'ъ', 'ы', 'ь',
-//            'э', 'ю', 'я', 'А', 'Б', 'В', 'Г', 'Д', 'Е', 'Ё',
-//            'Ж', 'З', 'И', 'Й', 'К', 'Л', 'М', 'Н', 'О', 'П',
-//            'Р', 'С', 'Т', 'У', 'Ф', 'Х', 'Ц', 'Ч', 'Ш', 'Щ',
-//            'Ь', 'Ы', 'Ь', 'Э', 'Ю', 'Я', '.', ',', '”', ':',
-//            '-', '!', '?', ' '};
 
     public Creator(char[] alphabet) {
         this.alphabet = alphabet;
     }
 
-    public int brakeBrut(String path) {
+    public int brakeBrut() {
         int step = 0;
         File file2 = new File("brakeBrut_text.txt");
-        try (FileReader fileReader = new FileReader(path);
+        try (FileReader fileReader = new FileReader("coding_text.txt");
              FileWriter fileWriter = new FileWriter(file2);
              BufferedReader bufferedReader = new BufferedReader(fileReader, alphabet.length)) {
             int counter;
+            Double sum = 0.00;
+            HashMap<Character, Double> characterDoubleHashMap = new HashMap<>();
             while ((counter = bufferedReader.read()) != -1) {
-                HashMap<Character, Double> characterDoubleHashMap = new HashMap<>();
-                Double sum = 0.00;
-                for (int i = 0; i < alphabet.length; i++) {
-                    if (alphabet[i] == (char) counter) {
-                        Character result = alphabet[i];
-                        sum++;
-                        characterDoubleHashMap.put(result, sum);
-                    }
-                }
+                Character result = (char) counter;
+                makeHashMap(result, sum);
             }
+            TreeMap<Character, Double> characterDoubleTreeMap = new TreeMap<>(characterDoubleHashMap);
+            for (Map.Entry<Character, Double> entry : characterDoubleTreeMap.entrySet())
+                System.out.println(entry.getKey() + " = " + entry.getValue());
         } catch (FileNotFoundException e) {
             System.out.println("there is no file");
         } catch (IOException e) {
             e.getStackTrace();
         }
-
-
         return step;
     }
 
@@ -55,12 +43,8 @@ public class Creator {
             int counter;
             while ((counter = bufferedReader.read()) != -1) {
                 char result = (char) counter;
-                if (skipChar(result) != result) {
-                    fileWriter.write(skipChar(result));
-                } else {
-                    result = findNewSymbolCoding(step, result);
-                    fileWriter.write(result);
-                }
+                result = findNewSymbolCoding(step, result);
+                fileWriter.write(result);
             }
             fileWriter.flush();
         } catch (FileNotFoundException e) {
@@ -80,12 +64,8 @@ public class Creator {
             int counter;
             while ((counter = bufferedReader.read()) != -1) {
                 char result = (char) counter;
-                if (skipChar(result) != result) {
-                    fileWriter.write(skipChar(result));
-                } else {
-                    result = findNewSymbolDeCoding(step, result);
-                    fileWriter.write(result);
-                }
+                result = findNewSymbolDeCoding(step, result);
+                fileWriter.write(result);
             }
             fileWriter.flush();
         } catch (FileNotFoundException e) {
@@ -121,25 +101,33 @@ public class Creator {
         return alphabet[newIndex];
     }
 
-    private int findCurrentPosition(char result) {
-        int findCurrentPosition = 0;
-        char charForSkip = ' ';
+    public int findCurrentPosition(char result) {
         for (int i = 0; i < alphabet.length; i++) {
             if (alphabet[i] == result) {
-                findCurrentPosition = i;
+                return i;
             }
         }
-        return findCurrentPosition;
+        return -1;
     }
 
-    public char skipChar(char result) {
-        char skip = ' ';
-        for (char c : alphabet) {
-            if (c != result) {
-                skip = result;
-                break;
+    public HashMap<?, ?> makeHashMap(char result, double sum) {
+        HashMap<Character, Double> characterDoubleHashMap = new HashMap<>();
+        for (int i = 0; i < alphabet.length; i++) {
+            if (alphabet[i] == result) {
+                sum++;
+                characterDoubleHashMap.put(result, sum);
+                if (characterDoubleHashMap.containsKey(result)) {
+                    characterDoubleHashMap.replace(result, sum);
+                }
             }
         }
-        return skip;
+        return characterDoubleHashMap;
+    }
+
+    public TreeMap<Character, Double> makeTreeMap(HashMap<Character, Double> characterDoubleHashMap) {
+        TreeMap<Character, Double> characterDoubleTreeMap = new TreeMap<>(characterDoubleHashMap);
+        for (Map.Entry<Character, Double> entry : characterDoubleTreeMap.entrySet())
+            System.out.println(entry.getKey() + " = " + entry.getValue());
+        return characterDoubleTreeMap;
     }
 }

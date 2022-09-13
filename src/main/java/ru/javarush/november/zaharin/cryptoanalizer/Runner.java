@@ -35,10 +35,10 @@ public class Runner {
                 File deCode = creator.deCoding(step);
                 //System.out.println(deCode);
             } else if (choose == 3) {
-                System.out.println("Input the path to your file?");
-                Scanner cn = new Scanner(System.in);
-                String path = cn.nextLine();
-                int reStep = creator.brakeBrut(path);
+//                System.out.println("Input the path to your file?");
+//                Scanner cn = new Scanner(System.in);
+//                String path = cn.nextLine();
+                int reStep = creator.brakeBrut();
             } else if (choose == 4) {
                 isWorking = false;
             }
