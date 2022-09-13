@@ -9,9 +9,9 @@ public class Application {
             'Р', 'С', 'Т', 'У', 'Ф', 'Х', 'Ц', 'Ч', 'Ш', 'Щ',
             'Ь', 'Ы', 'Ь', 'Э', 'Ю', 'Я', '.', ',', '”', ':',
             '-', '!', '?', ' '};
+    //'\n', '\r', '\f', '\t'
 
     public static void main(String[] args) {
-        //char[] symbols = alphabet.toCharArray();
         Creator creator = new Creator(alphabet);
         new Runner(creator).run();
     }
