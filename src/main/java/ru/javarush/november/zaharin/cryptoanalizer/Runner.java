@@ -38,7 +38,7 @@ public class Runner {
 //                System.out.println("Input the path to your file?");
 //                Scanner cn = new Scanner(System.in);
 //                String path = cn.nextLine();
-                int reStep = creator.brakeBrut();
+                int reStep = creator.countFrequencyLetters();
             } else if (choose == 4) {
                 isWorking = false;
             }
