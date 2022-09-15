@@ -1,7 +1,10 @@
 package ru.javarush.november.zaharin.cryptoanalizer;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class Creator {
     private char[] alphabet;
@@ -10,43 +13,43 @@ public class Creator {
         this.alphabet = alphabet;
     }
 
-    public int brakeBrut() {
-        int step = 0;
+    public File brakeBrut(String path) {
+        int step;
+        String path1 = "src/main/resources/Chukovskiy.txt"; // for treemap with reference values
+        countFrequencyLetters(path1); // map reference values
         File file2 = new File("brakeBrut_text.txt");
-        try (FileReader fileReader = new FileReader("coding_text.txt");
-             FileWriter fileWriter = new FileWriter(file2);
+        TreeMap<Character, Long> treeMapCode = new TreeMap<>();
+        try (FileReader fileReader = new FileReader(path);
+             //FileWriter fileWriter = new FileWriter(file2);
              BufferedReader bufferedReader = new BufferedReader(fileReader, alphabet.length)) {
             int counter;
-            double sum = 0;
-            double total = 0;
-            HashMap<Character, Double> hashMapCode = new HashMap<>();
+            long sum = 0L;
+            long total = 0L;
             while ((counter = bufferedReader.read()) != -1) {
                 total++;
                 char result = (char) counter;
                 for (char c : alphabet) {
                     if (c == result) {
                         sum = sum + 1;
-                        hashMapCode.putIfAbsent(result, sum);
-                        if (hashMapCode.containsKey(result)) {
-                            hashMapCode.merge(result,  1.0, (oldVal, newVal) -> oldVal + newVal);
+                        treeMapCode.putIfAbsent(result, sum);
+                        if (treeMapCode.containsKey(result)) {
+                            treeMapCode.merge(result, 1L, (oldVal, newVal) -> oldVal + newVal);
                         }
                     }
                 }
             }
-            for (Map.Entry<Character, Double> entry : hashMapCode.entrySet()) {
-                System.out.println(entry.getKey() + " = " + entry.getValue());
-            }
-            System.out.println(total);
+
+            //step = foundStepForBrut(treeMapCode, countFrequencyLetters(path));
+            //deCoding(path, step);
         } catch (FileNotFoundException e) {
             System.out.println("there is no file");
         } catch (IOException e) {
             e.getStackTrace();
         }
-        return step;
+        return file2;
     }
 
     public File coding(String path, int step) {
-        // think about "n\"
         File file2 = new File("coding_text.txt");
         try (FileReader fileReader = new FileReader(path);
              FileWriter fileWriter = new FileWriter(file2);
@@ -66,10 +69,9 @@ public class Creator {
         return file2;
     }
 
-    public File deCoding(int step) {
-        // think about "n\"
+    public File deCoding(String path, int step) {
         File file2 = new File("deCoding_text.txt");
-        try (FileReader fileReader = new FileReader("coding_text.txt");
+        try (FileReader fileReader = new FileReader(path);
              FileWriter fileWriter = new FileWriter(file2);
              BufferedReader bufferedReader = new BufferedReader(fileReader, alphabet.length)) {
             int counter;
@@ -87,7 +89,7 @@ public class Creator {
         return file2;
     }
 
-    public char findNewSymbolCoding(int step, char result) { // Andrii Shylin (UA Kyiv)
+    public char findNewSymbolCoding(int step, char result) {// Andrii Shylin (UA Kyiv)
 //        findCurrentPosition returns -1 if current symbol is not present in alphabet
         int currentPosition = findCurrentPosition(result);
         if (currentPosition == -1) {
@@ -121,73 +123,135 @@ public class Creator {
         return -1;
     }
 
-    public HashMap<Character, Long> makeHashMap(char result, long sum, HashMap<Character, Long> hashMap) {
-        for (char c : alphabet) {
-            if (c == result) {
-                sum++;
-                hashMap.put(result, sum);
-                if (hashMap.containsKey(result)) {
-                    hashMap.replace(result, sum);
-                }
-            }
-        }
-        return hashMap;
-    }
-
-    public HashMap<Character, Double> makeFrequencyTreeMap() {
-        HashMap<Character, Double> alphabetFrequencyTreeMap = new HashMap<>();
-        alphabetFrequencyTreeMap.put('о', 10.983);
-        alphabetFrequencyTreeMap.put('е', 8.4830);
-        alphabetFrequencyTreeMap.put('а', 7.998);
-        alphabetFrequencyTreeMap.put('и', 7.367);
-        alphabetFrequencyTreeMap.put('н', 6.700);
-        alphabetFrequencyTreeMap.put('т', 6.318);
-        alphabetFrequencyTreeMap.put('с', 5.473);
-        alphabetFrequencyTreeMap.put('р', 4.746);
-        alphabetFrequencyTreeMap.put('в', 4.533);
-        alphabetFrequencyTreeMap.put('л', 4.343);
-
-        return alphabetFrequencyTreeMap;
-    }
-
-    public TreeMap<Character, Double> makeTreeMap(HashMap<Character, Double> hashMap) {
-        TreeMap<Character, Double> treeMap = new TreeMap<>(hashMap);
-        for (Map.Entry<Character, Double> entry : treeMap.entrySet())
-            System.out.println(entry.getKey() + " = " + entry.getValue());
-        return treeMap;
-    }
-    public int countFrequencyLetters() {
-        int step = 0;
-        File file2 = new File("countFrequencyLettersInCoding_text.txt");
-        try (FileReader fileReader = new FileReader("src/main/resources/Chukovskiy.txt");
-             FileWriter fileWriter = new FileWriter(file2);
+    public TreeMap<Character, Long> countFrequencyLetters(String path) {
+        TreeMap<Character, Long> treeMapOriginal = new TreeMap<>();
+        try (FileReader fileReader = new FileReader(path);
              BufferedReader bufferedReader = new BufferedReader(fileReader, alphabet.length)) {
             int counter;
-            double sum = 0;
-            double total = 0;
-            HashMap<Character, Double> hashMapOriginal = new HashMap<>();
+            long sum = 0L;
+            long total = 0L;
             while ((counter = bufferedReader.read()) != -1) {
                 total++;
                 char result = (char) counter;
                 for (char c : alphabet) {
                     if (c == result) {
                         sum = sum + 1;
-                        hashMapOriginal.putIfAbsent(result, sum);
-                        if (hashMapOriginal.containsKey(result)) {
-                            hashMapOriginal.merge(result,  1.0, (oldVal, newVal) -> oldVal + newVal);
+                        treeMapOriginal.putIfAbsent(result, sum);
+                        if (treeMapOriginal.containsKey(result)) {
+                            treeMapOriginal.merge(result, 1L, (oldVal, newVal) -> oldVal + newVal);
                         }
                     }
                 }
             }
-            for (Map.Entry<Character, Double> entry : hashMapOriginal.entrySet()) {
-                System.out.println(entry.getKey() + " = " + entry.getValue());
-            }
-            System.out.println(total);
         } catch (FileNotFoundException e) {
             System.out.println("there is no file");
         } catch (IOException e) {
             e.getStackTrace();
         }
-        return step;
+        return treeMapOriginal;
+    }
+
+    public int foundStepForBrut(TreeMap<Character, Long> treeMapOriginal, TreeMap<Character, Long> treeMapCoded) {
+        char original = treeMapOriginal.firstKey();
+        char coded = treeMapCoded.firstKey();
+        int indexOriginal = 0;
+        int indexCoded = 0;
+        for (int i = 0; i < alphabet.length; i++) {
+            if (original == alphabet[i]) {
+                indexOriginal = i;
+            }
+        }
+        for (int i = 0; i < alphabet.length; i++) {
+            if (coded == alphabet[i]) {
+                indexCoded = i;
+            }
+        }
+        return indexCoded - indexOriginal;
+    }
+
+    public TreeMap<Character, Long> makeFrequencyTreeMap() {
+        TreeMap<Character, Long> alphabetFrequencyTreeMap = new TreeMap<>();
+        alphabetFrequencyTreeMap.put('о', 10983L);
+        alphabetFrequencyTreeMap.put('е', 84830L);
+        alphabetFrequencyTreeMap.put('а', 7998L);
+        alphabetFrequencyTreeMap.put('и', 7367L);
+        alphabetFrequencyTreeMap.put('н', 6700L);
+        alphabetFrequencyTreeMap.put('т', 6318L);
+        alphabetFrequencyTreeMap.put('с', 5473L);
+        alphabetFrequencyTreeMap.put('р', 4746L);
+        alphabetFrequencyTreeMap.put('в', 4533L);
+        alphabetFrequencyTreeMap.put('л', 4343L);
+        return alphabetFrequencyTreeMap;
+    }
+
+    public int foundIndexOfCharacters(TreeMap<Character, Long> hashMapO, TreeMap<Character, Long> hashMapC) {
+        //the most used characters 'о','е','а','и','н','т','с','в','р','л'
+
+        long original = hashMapO.get('о');
+        long coded = hashMapC.get('o');
+        //
+
+        int indexOriginal = 0;
+        int indexCoded = 0;
+        for (int i = 0; i < alphabet.length; i++) {
+            if (original == alphabet[i]) {
+                indexOriginal = i;
+            }
+        }
+        for (int i = 0; i < alphabet.length; i++) {
+            if (coded == alphabet[i]) {
+                indexCoded = i;
+            }
+
+        }
+        return indexCoded - indexOriginal;
+    }
+
+    public HashMap<Character, Long> countChars(String path) {
+        HashMap<Character, Long> hashMap = new HashMap<>();
+        try (FileReader fileReader = new FileReader(path);
+             BufferedReader bufferedReader = new BufferedReader(fileReader)) {
+            int counter;
+            long sum = 0L;
+            long total = 0L;
+            while ((counter = bufferedReader.read()) != -1) {
+                total++;
+                char result = (char) counter;
+                for (char c : alphabet) {
+                    if (c == result) {
+                        sum = sum + 1;
+                        hashMap.putIfAbsent(result, sum);
+                        if (hashMap.containsKey(result)) {
+                            hashMap.merge(result, 1L, Long::sum);
+                        }
+                    }
+                }
+            }
+            Map<Character, Long> sortedMap = hashMap.entrySet().stream()
+                    .sorted(Map.Entry.comparingByValue())
+                    .collect(Collectors.toMap(
+                            Map.Entry::getKey,
+                            Map.Entry::getValue,
+                            (a, b) -> { throw new AssertionError(); },
+                            LinkedHashMap::new
+                    ));
+            sortedMap.entrySet().forEach(System.out::println);
+            System.out.println("+++++++++++++++++++++++++++++++++++++++");
+            TreeMap<Character, Long> treeMap = new TreeMap<>(sortedMap);
+            for (Map.Entry m : treeMap.entrySet()) {
+                System.out.println(m.getKey() + " " + m.getValue());
+            }
+            System.out.println(total);
+            System.out.println("+++++++++++++++++++++++++++++++++++++++");
+            System.out.println(treeMap.firstKey());
+            System.out.println("+++++++++++++++++++++++++++++++++++++++");
+            System.out.println(treeMap.lastKey());
+            System.out.println("+++++++++++++++++++++++++++++++++++++++");
+        } catch (FileNotFoundException e) {
+            System.out.println("there is no file");
+        } catch (IOException e) {
+            e.getStackTrace();
+        }
+        return hashMap;
     }
 }
