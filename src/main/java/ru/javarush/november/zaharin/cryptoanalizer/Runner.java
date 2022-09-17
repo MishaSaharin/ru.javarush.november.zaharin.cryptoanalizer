@@ -1,7 +1,6 @@
 package ru.javarush.november.zaharin.cryptoanalizer;
 
 import java.io.File;
-import java.util.Map;
 import java.util.Scanner;
 
 public class Runner {
@@ -26,18 +25,20 @@ public class Runner {
                 pathOriginal = cn.nextLine();
                 System.out.println("Input the key");
                 Scanner cns = new Scanner(System.in);
-                int step = cns.nextInt();
+                String sStep = cns.nextLine();
+                long step = Integer.parseInt(sStep);
                 File enCode = creator.coding(pathOriginal, step);
             } else if (choose == 2) {
-                System.out.println("Input the path to coded file (for example coding_text.txt)");
+                System.out.println("Input the path to the coded file (for example coding_text.txt)");
                 Scanner cn = new Scanner(System.in);
                 pathCoded = cn.nextLine();
                 System.out.println("Input the key");
                 Scanner cns = new Scanner(System.in);
-                int step = cns.nextInt();
+                String sStep = cns.nextLine();
+                long step = Integer.parseInt(sStep);
                 File deCode = creator.deCoding(pathCoded, step);
             } else if (choose == 3) {
-                System.out.println("Input the path to coded file (for example coding_text.txt)");
+                System.out.println("Input the path to the coded file (for example coding_text.txt)");
                 Scanner cn = new Scanner(System.in);
                 pathBrut = cn.nextLine();
                 File brakeBrut = creator.brakeBrut(pathBrut);

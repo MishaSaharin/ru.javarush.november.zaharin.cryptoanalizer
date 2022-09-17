@@ -12,12 +12,11 @@ public class Creator {
 
     public File brakeBrut(String pathBrut) {
         int step;
-        HashMap<Character, Long> cOriginal = countChars("src/main/resources/Chukovskiy.txt");
-        HashMap<Character, Long> cCoded = countChars(pathBrut);
-        char maxOriginal = Collections.max(cOriginal.entrySet(), Map.Entry.comparingByValue()).getKey();
-        char maxCoded = Collections.max(cCoded.entrySet(), Map.Entry.comparingByValue()).getKey();
-        System.out.println(maxOriginal);
-        System.out.println(maxCoded);
+        String pathReferenceCalculatedChars = "src/main/resources/Chukovskiy.txt";
+        HashMap<Character, Long> mapCoded = countChars(pathBrut);
+        HashMap<Character, Long> mapOriginal = countChars(pathReferenceCalculatedChars);
+        char maxOriginal = Collections.max(mapOriginal.entrySet(), Map.Entry.comparingByValue()).getKey();
+        char maxCoded = Collections.max(mapCoded.entrySet(), Map.Entry.comparingByValue()).getKey();
         int indexMaxC = 0;
         int indexMaxO = 0;
         for (int i = 0; i < alphabet.length; i++) {
@@ -34,11 +33,11 @@ public class Creator {
         if (step < 0) {
             step = alphabet.length - Math.abs(step);
         }
-        System.out.println(step);
+        System.out.println("The text in your file has been encrypted with " + step);
         return deCoding(pathBrut, step);
     }
 
-    public File coding(String path, int step) {
+    public File coding(String path, long step) {
         File fResult = new File("coding_text.txt");
         try (FileReader fileReader = new FileReader(path);
              FileWriter fileWriter = new FileWriter(fResult);
@@ -58,10 +57,11 @@ public class Creator {
         } catch (IOException e) {
             e.getStackTrace();
         }
+        System.out.println("In coding_text.txt you will find the result of coding.");
         return fResult;
     }
 
-    public File deCoding(String path, int step) {
+    public File deCoding(String path, long step) {
         File fResult = new File("deCoding_text.txt");
         try (FileReader fileReader = new FileReader(path);
              FileWriter fileWriter = new FileWriter(fResult);
@@ -81,25 +81,26 @@ public class Creator {
         } catch (IOException e) {
             e.getStackTrace();
         }
+        System.out.println("In deCoding_text.txt you will find the result of decoding.");
         return fResult;
     }
 
-    public char findNewSymbolCoding(int step, char result) {
+    public char findNewSymbolCoding(long step, char result) {
         int currentPosition = findCurrentPosition(result);
         if (currentPosition == -1) {
             return result;
         }
-        int normalizedDelta = Math.abs(step % alphabet.length);
+        int normalizedDelta = (int) Math.abs(step % alphabet.length);
         int newIndex = (currentPosition + normalizedDelta) % alphabet.length;
         return alphabet[newIndex];
     }
 
-    public char findNewSymbolDeCoding(int step, char result) {
+    public char findNewSymbolDeCoding(long step, char result) {
         int currentPosition = findCurrentPosition(result);
         if (currentPosition == -1) {
             return result;
         }
-        int normalizedDelta = Math.abs(step % alphabet.length);
+        int normalizedDelta = (int) Math.abs(step % alphabet.length);
         int newIndex = (currentPosition - normalizedDelta) % alphabet.length;
         if (newIndex < 0) {
             newIndex = alphabet.length - Math.abs(newIndex);
@@ -137,7 +138,7 @@ public class Creator {
         return mapCalculatedChars;
     }
 
-    public HashMap<Character, Long> mapOfChar(HashMap<Character, Long> hashMap, int counter, long sum) {
+    public void mapOfChar(HashMap<Character, Long> hashMap, int counter, long sum) {
         char result = (char) counter;
         for (char c : alphabet) {
             if (c == result) {
@@ -148,6 +149,5 @@ public class Creator {
                 }
             }
         }
-        return hashMap;
     }
 }
