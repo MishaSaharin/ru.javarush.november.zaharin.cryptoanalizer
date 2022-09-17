@@ -16,28 +16,31 @@ public class Runner {
         while (isWorking) {
             System.out.println("Input your choose [1 coding] [2 recoding] [3 force] [4 exit]");
             Scanner c = new Scanner(System.in);
+            String pathOriginal = null;
+            String pathCoded = null;
+            String pathBrut = null;
             int choose = Integer.parseInt(c.nextLine());
             if (choose == 1) {
-                System.out.println("Input the path to your file");
+                System.out.println("Input the path to your file (for example src/main/resources/Chukovskiy.txt)");
                 Scanner cn = new Scanner(System.in);
-                String path = cn.nextLine();
+                pathOriginal = cn.nextLine();
                 System.out.println("Input the key");
                 Scanner cns = new Scanner(System.in);
                 int step = cns.nextInt();
-                File enCode = creator.coding(path, step);
+                File enCode = creator.coding(pathOriginal, step);
             } else if (choose == 2) {
-                System.out.println("Input the path to your file");
+                System.out.println("Input the path to coded file (for example coding_text.txt)");
                 Scanner cn = new Scanner(System.in);
-                String path = cn.nextLine();
+                pathCoded = cn.nextLine();
                 System.out.println("Input the key");
                 Scanner cns = new Scanner(System.in);
                 int step = cns.nextInt();
-                File deCode = creator.deCoding(path,step);
+                File deCode = creator.deCoding(pathCoded, step);
             } else if (choose == 3) {
-                System.out.println("Input the path to your file?");
+                System.out.println("Input the path to coded file (for example coding_text.txt)");
                 Scanner cn = new Scanner(System.in);
-                String path = cn.nextLine();
-                Map brakeBrut = creator.countChars(path);
+                pathBrut = cn.nextLine();
+                File brakeBrut = creator.brakeBrut(pathBrut);
             } else if (choose == 4) {
                 isWorking = false;
             }
