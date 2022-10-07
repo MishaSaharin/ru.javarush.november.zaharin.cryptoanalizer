@@ -37,7 +37,7 @@ public class Creator {
         return deCoding(pathBrut, step);
     }
 
-    public File coding(String path, long step) {
+    public File coding(String path, int step) {
         File fResult = new File("coding_text.txt");
         try (FileReader fileReader = new FileReader(path);
              FileWriter fileWriter = new FileWriter(fResult);
@@ -61,7 +61,7 @@ public class Creator {
         return fResult;
     }
 
-    public File deCoding(String path, long step) {
+    public File deCoding(String path, int step) {
         File fResult = new File("deCoding_text.txt");
         try (FileReader fileReader = new FileReader(path);
              FileWriter fileWriter = new FileWriter(fResult);
@@ -85,7 +85,7 @@ public class Creator {
         return fResult;
     }
 
-    public char findNewSymbolCoding(long step, char result) {
+    private char findNewSymbolCoding(int step, char result) {
         int currentPosition = findCurrentPosition(result);
         if (currentPosition == -1) {
             return result;
@@ -95,7 +95,7 @@ public class Creator {
         return alphabet[newIndex];
     }
 
-    public char findNewSymbolDeCoding(long step, char result) {
+    private char findNewSymbolDeCoding(int step, char result) {
         int currentPosition = findCurrentPosition(result);
         if (currentPosition == -1) {
             return result;
@@ -108,7 +108,7 @@ public class Creator {
         return alphabet[newIndex];
     }
 
-    public int findCurrentPosition(char result) {
+    private int findCurrentPosition(char result) {
         for (int i = 0; i < alphabet.length; i++) {
             if (alphabet[i] == result) {
                 return i;
@@ -117,7 +117,7 @@ public class Creator {
         return -1;
     }
 
-    public HashMap<Character, Long> countChars(String path) {
+    private HashMap<Character, Long> countChars(String path) {
         HashMap<Character, Long> mapCalculatedChars = new HashMap<>();
         try (FileReader fileReader = new FileReader(path);
              BufferedReader bufferedReader = new BufferedReader(fileReader)) {
@@ -138,7 +138,7 @@ public class Creator {
         return mapCalculatedChars;
     }
 
-    public void mapOfChar(HashMap<Character, Long> hashMap, int counter, long sum) {
+    private void mapOfChar(HashMap<Character, Long> hashMap, int counter, int sum) {
         char result = (char) counter;
         for (char c : alphabet) {
             if (c == result) {

@@ -1,7 +1,7 @@
 package ru.javarush.november.zaharin.cryptoanalizer;
 
 public class Application {
-    private static final char[] alphabet = {'а', 'б', 'в', 'г', 'д', 'е', 'ё', 'ж', 'з', 'и',
+    private static final char[] ALPHABET = {'а', 'б', 'в', 'г', 'д', 'е', 'ё', 'ж', 'з', 'и',
             'й', 'к', 'л', 'м', 'н', 'о', 'п', 'р', 'с', 'т',
             'у', 'ф', 'х', 'ц', 'ч', 'ш', 'щ', 'ъ', 'ы', 'ь',
             'э', 'ю', 'я',
@@ -12,7 +12,7 @@ public class Application {
             '.', ',', '”', ':', '-', '!', '?', ' '};
 
     public static void main(String[] args) {
-        Creator creator = new Creator(alphabet);
+        Creator creator = new Creator(ALPHABET);
         new Runner(creator).run();
     }
 }
